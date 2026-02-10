@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+  <style>
+    body {
+      width: 260px;
+      font-family: Arial, sans-serif;
+      background: #1e1e1e;
+      color: white;
+      margin: 0;
+      padding: 12px;
+    }
+
+    h3 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    input {
+      flex: 1;
+      padding: 6px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      background: #ff4e45;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #ff1f1f;
+    }
+
+    #channelList {
+      list-style: none;
+      padding: 0;
+      margin-top: 10px;
+    }
+
+    #channelList li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2a2a2a;
+      padding: 6px 8px;
+      margin-top: 5px;
+      border-radius: 6px;
+    }
+
+    #channelList button {
+      background: #555;
+      padding: 4px 6px;
+      font-size: 12px;
+    }
+
+    #channelList button:hover {
+      background: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <h3>Hidden channels</h3>
+
+  <div class="input-row">
+    <input id="channelName" type="text" placeholder="Enter channel name">
+    <button id="addButton">Add</button>
+  </div>
+        <ul id="channelList"></ul>
+        <script src="options.js"></script>
+    </body>
+</html>

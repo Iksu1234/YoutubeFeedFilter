@@ -1,17 +1,70 @@
-var observer = new MutationObserver(function (mutationsList, observer) {
-  var xpath = "//ytd-rich-shelf-renderer[@is-shorts='']";
-  var matchingElement = document.evaluate(
-    xpath,
-    document,
-    null,
-    XPathResult.FIRST_ORDERED_NODE_TYPE,
-    null
-  ).singleNodeValue;
+let storedChannelList = [];
 
-  if (matchingElement != null) {
-    matchingElement.style.display = "none";
-    observer.disconnect(); // Stop observing once the element is found
+//gets the channel list from browser storage and runs once to hide shorts and channels
+async function init() {
+  let result = await browser.storage.local.get("channelList");
+  storedChannelList = result.channelList || [];
+  syncFeed();
+}
+
+//hides or unhides channels on the feed that are or are not on the list
+function syncFeed() {
+  hideShorts();
+
+  //finds all video elements
+  const allVideos = document.querySelectorAll("ytd-rich-item-renderer");
+
+  //goes through the elements to find
+  allVideos.forEach(video => {
+    //find the channel name link
+    const channelLink = video.querySelector('a[href*="/@"]');
+    if (!channelLink) return;
+
+    const channelName = channelLink.textContent.trim();
+
+    //hide the channel if name is on the list
+    if (storedChannelList.includes(channelName)) {
+      if (video.style.display !== "none") {
+        video.style.display = "none";
+      }
+    //unhide if the name is not on the list
+    } else {
+      if (video.style.display === "none") {
+        video.style.display = "";
+      }
+    }
+  });
+}
+
+//hides shorts from feed
+function hideShorts(){
+//find ytd-rich-section-renderer elements
+const foundSections = document.querySelectorAll("ytd-rich-section-renderer");
+//hide elements, skip the title element
+if (foundSections) {
+  foundSections.forEach((section,index) => {
+    if (index !== 0 && section.style.display !== "none") {
+      section.style.display = "none";
+    }
+});
+}
+};
+
+//observes the feed to find channels to hide or unhide
+const observer = new MutationObserver(() => {
+  syncFeed();
+});
+observer.observe(document.body, {
+  childList: true,
+  subtree: true
+});
+
+//syncs the feed when the UI list is changed
+browser.storage.onChanged.addListener((changes) => {
+  if (changes.channelList) {
+    storedChannelList = changes.channelList.newValue || [];
+    syncFeed();
   }
 });
 
-observer.observe(document.body, { childList: true, subtree: true });
+init();
