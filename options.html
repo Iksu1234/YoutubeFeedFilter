@@ -18,6 +18,13 @@
       text-align: center;
     }
 
+    .shortsButton-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 2vh;
+    }
+    
+
     .input-row {
       display: flex;
       gap: 6px;
@@ -74,7 +81,11 @@
 <body>
 
   <h3>Hidden channels</h3>
-
+  <div class="shortsButton-row">
+    <label>Hide shorts</label>
+    <input type="checkbox" name="hideShorts" id="hideShortsCheckbox">
+    <br>
+  </div>
   <div class="input-row">
     <input id="channelName" type="text" placeholder="Enter channel name">
     <button id="addButton">Add</button>

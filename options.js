@@ -1,10 +1,19 @@
 const CHANNEL_LIST_KEY = "channelList";
+const HIDE_SHORTS_KEY = "hideShorts";
+const shortsCheckbox = document.getElementById('hideShortsCheckbox');
+
 
 //get list from browser storage
-async function getList() {
+async function getChannelList() {
     let result = await browser.storage.local.get(CHANNEL_LIST_KEY);
     //if nothing in storage, return empty array
     return result[CHANNEL_LIST_KEY] || [];
+}
+
+//get HIDE_SHORTS_KEY from browser storage
+async function getShortsToggle() {
+    let result = await browser.storage.local.get(HIDE_SHORTS_KEY);
+    return result[HIDE_SHORTS_KEY];
 }
 
 //save list to browser storage
@@ -16,7 +25,8 @@ async function saveList(list) {
 
 //add channel to list
 async function addChannel(name) {
-    let list = await getList();
+
+    let list = await getChannelList();
 
     //check if the name already exists 
     const isDuplicate = list.some(item => item.toLowerCase() === name.toLowerCase());
@@ -31,19 +41,26 @@ async function addChannel(name) {
 
 //delete channel from list
 async function deleteChannel(name) {
-  let list = await getList();
+  let list = await getChannelList();
 
   //remove  item from list
-  list = list.filter(ch => ch !== name);
+  list = list.filter(channel => channel !== name);
 
   await saveList(list);
   //update list visual
   renderList();
 }
 
+//toggle shorts on / off in browser storage
+async function toggleShorts(isChecked){
+await browser.storage.local.set({
+    [HIDE_SHORTS_KEY]: isChecked
+  });
+}
+
 //show list in options popup
 async function renderList() {
-  const list = await getList();
+  const list = await getChannelList();
   const ul = document.getElementById("channelList");
   ul.innerHTML = "";
 
@@ -85,5 +102,17 @@ document.getElementById("channelName").addEventListener("keypress", async (e) =>
   }
 });
 
-//load list when options opened
+//listen for shorts checkbox changes
+shortsCheckbox.addEventListener('change', (event) => {
+  toggleShorts(event.target.checked);
+});
+
+//check shorts toggle status from storage and toggle
+async function initCheckbox() {
+  const isChecked = await getShortsToggle();
+  shortsCheckbox.checked = !!isChecked; 
+}
+
+//load list and toggle shorts checkbox to correct value
+initCheckbox();
 renderList();

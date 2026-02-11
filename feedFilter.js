@@ -1,9 +1,13 @@
 let storedChannelList = [];
+let shortsToggle = false;
 
 //gets the channel list from browser storage and runs once to hide shorts and channels
 async function init() {
   let result = await browser.storage.local.get("channelList");
   storedChannelList = result.channelList || [];
+
+  result = await browser.storage.local.get("hideShorts");
+  shortsToggle = result.hideShorts;
   syncFeed();
 }
 
@@ -37,18 +41,16 @@ function syncFeed() {
 }
 
 //hides shorts from feed
-function hideShorts(){
-//find ytd-rich-section-renderer elements
-const foundSections = document.querySelectorAll("ytd-rich-section-renderer");
-//hide elements, skip the title element
-if (foundSections) {
-  foundSections.forEach((section,index) => {
-    if (index !== 0 && section.style.display !== "none") {
-      section.style.display = "none";
+function hideShorts() {
+  const foundSections = document.querySelectorAll("ytd-rich-section-renderer");
+  
+  foundSections.forEach((section, index) => {
+    // Skip the first title section
+    if (index !== 0) {
+      section.style.display = shortsToggle ? "none" : ""; 
     }
-});
+  });
 }
-};
 
 //observes the feed to find channels to hide or unhide
 const observer = new MutationObserver(() => {
@@ -61,10 +63,15 @@ observer.observe(document.body, {
 
 //syncs the feed when the UI list is changed
 browser.storage.onChanged.addListener((changes) => {
+  //channel list
   if (changes.channelList) {
     storedChannelList = changes.channelList.newValue || [];
-    syncFeed();
   }
+  //shorts toggle
+  if (changes.hideShorts) {
+    shortsToggle = changes.hideShorts.newValue;
+  }
+  syncFeed();
 });
 
 init();
