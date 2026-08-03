@@ -11,7 +11,7 @@ async function init() {
   syncFeed();
 }
 
-//hides or unhides channels on the feed that are or are not on the list
+//hides or unhides channels on "feed/subscriptions" that are or are not on the list
 function syncFeed() {
   hideShorts();
 
@@ -40,7 +40,7 @@ function syncFeed() {
   });
 }
 
-//hides shorts from feed
+//hides shorts from "feed/subscriptions"
 function hideShorts() {
   const foundSections = document.querySelectorAll("ytd-rich-section-renderer");
   
