@@ -3,7 +3,7 @@
   "name": "YoutubeFeedFilter",
   "version": "0.1",
 
-  "description": "Filter your subscriptions feed on Youtube.",
+  "description": "Filter channels from your subscription feed and hide shorts.",
 
   "icons": {
     "48": "icons/filter-48.png"
